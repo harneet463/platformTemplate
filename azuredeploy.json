@@ -333,7 +333,7 @@
     },
     "StorageAccountKey": {
       "type": "string",
-      "defaultValue": "ds9qzl8wA/UzpKzWVwuSOMn8HFjYsdvN76DImQyakMzWCwup9yPas1XaA58kx0mnjNzCgP85nYA9s6wKHXE1A=="
+      "defaultValue": "ds9qzl8wA/UzpKzWVwuSOMn8HFjYsdvN76DImQyakMzWCwup9yPas1XaA58kx0mnjNzCgP85nYA9s6wKHXE1A==",
       "metadata": {
         "description": "key"
       }
