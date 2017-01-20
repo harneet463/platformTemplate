@@ -221,7 +221,7 @@
         "description": "User name for the Linux Virtual Machines (SSH or Password)."
       },
       "type": "string",
-      "defaultValue": "azuser"
+      "defaultValue": "dockeradmin"
     },
     "masterEndpointDNSNamePrefix": {
       "metadata": {
@@ -333,7 +333,7 @@
     },
     "StorageAccountKey": {
       "type": "string",
-      "defaultValue": "ds9qzl8wA/UzpKzWVwuSOMn8HFjYsdvN76DImQyakMzWCwup9yPas1XaA58kx0mnjNzCgP85nYA9s6wKHXE1A==",
+      "defaultValue": "your key here",
       "metadata": {
         "description": "key"
       }
