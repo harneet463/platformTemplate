@@ -319,27 +319,27 @@
     },
     "scriptedfilename": {
       "type": "string",
-      "defaultValue": "mymount.sh",
+      "defaultValue": "mount.sh",
       "metadata": {
         "description": "the mount name"
       }
     },
     "scriptstorageaccount": {
       "type": "string",
-      "defaultValue": "dinfiels",
+      "defaultValue": "qppstorage2",
       "metadata": {
         "description": "your share name "
       }
     },
     "StorageAccountKey": {
       "type": "string",
-
+      "defaultValue": "ds9qzl8wA/UzpKzWVwuSOMn8HFjYsdvN76DImQyakMzWCwup9yPas1XaA58kx0mnjNzCgP85nYA9s6wKHXE1A=="
       "metadata": {
         "description": "key"
       }
     },
     "uriforsctipt": {
-      "defaultValue": "https://dinfiles.blob.core.windows.net/vhds/mount.sh",
+      "defaultValue": "https://qppstorage2.blob.core.windows.net/scripts/mount.sh",
       "metadata": {
         "description": "you should put here the exisiting filestorage name on the same resource group"
       },
