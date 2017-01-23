@@ -1188,18 +1188,16 @@
         "[concat('Microsoft.Compute/virtualMachines/', concat(variables('masterVMNamePrefix'), copyIndex()))]"
       ],
       "location": "[resourceGroup().location]",
-      "name": "custom-[concat(variables('masterVMNamePrefix'), copyIndex(), '/configuremaster')]",
+      "name": "custom-[concat(variables('masterVMNamePrefix'), copyIndex(), '/configuremaster2')]",
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "settings": {
-          "commandToExecute": "[variables('masterCustomScript')]",
           "fileUris": [
                             "[concat(parameters('uriformastersctipt'))]"
                           ]
         },
 	"protectedSettings": {
                           "commandToExecute": "sh checkscript.sh",
-
                           "storageAccountName": "[concat(parameters('scriptstorageaccount'))]",
                           "storageAccountKey": "[concat(parameters('StorageAccountKey'))]"
                         },
