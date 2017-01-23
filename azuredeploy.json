@@ -1,3 +1,20 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Gist
+ @harneet463
+ Watch 0
+  Star 0
+  Fork 0 harneet463/platformTemplate
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Pulse  Graphs  Settings
+Branch: master Find file Copy pathplatformTemplate/azuredeploy.json
+7856890  3 days ago
+@harneet463 harneet463 Update azuredeploy.json
+2 contributors @harneet463 @digeler
+RawBlameHistory     
+1187 lines (1183 sloc)  47 KB
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
@@ -344,7 +361,15 @@
         "description": "you should put here the exisiting filestorage name on the same resource group"
       },
       "type": "string"
+    },
+       "uriformastersctipt": {
+      "defaultValue": "https://qppstorage2.blob.core.windows.net/scripts/mount.sh",
+      "metadata": {
+        "description": "you should put here the exisiting filestorage name on the same resource group"
+      },
+      "type": "string"
     }
+
   },
   "variables": {
     "adminUsername": "[parameters('linuxAdminUsername')]",
@@ -1143,7 +1168,33 @@
               "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('masterStorageAccountName')), variables('apiVersionStorage')).primaryEndpoints.blob, 'vhds/', variables('masterVMNamePrefix'), copyIndex(), '-osdisk.vhd')]"
             }
           }
-        }
+        },
+	"extensionProfile": {
+                "extensions": [
+                    {
+                        "name": "mountfolder",
+                      "properties": {
+                        "publisher": "Microsoft.OSTCExtensions",
+                        "type": "CustomScriptForLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                          "fileUris": [
+                            "[concat(parameters('uriformastersctipt'))]"
+
+
+                          ]
+                        },
+                        "protectedSettings": {
+                          "commandToExecute": "sh mountmaster.sh",
+
+                          "storageAccountName": "[concat(parameters('scriptstorageaccount'))]",
+                          "storageAccountKey": "[concat(parameters('StorageAccountKey'))]"
+                        }
+                      }
+                    }
+                ]
+            }
       },
       "tags": {
         "creationSource": "[concat('acsengine-', variables('masterVMNamePrefix'), copyIndex())]"
