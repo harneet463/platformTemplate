@@ -1188,7 +1188,7 @@
         "[concat('Microsoft.Compute/virtualMachines/', concat(variables('masterVMNamePrefix'), copyIndex()))]"
       ],
       "location": "[resourceGroup().location]",
-      "name": "custom-[concat(variables('masterVMNamePrefix'), copyIndex(), '/configuremaster2')]",
+      "name": "[concat(variables('masterVMNamePrefix'), copyIndex(), '/configuremaster2')]",
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "settings": {
