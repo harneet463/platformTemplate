@@ -116,7 +116,7 @@
         "description": "Sets the Domain name label for the agent pool IP Address.  The concatenation of the domain name label and the regional DNS zone make up the fully qualified domain name associated with the public IP address."
       },
       "type": "string",
-      "defaultValue": "agentDNS"
+      "defaultValue": "agentDNS-check"
     },
     "agentpool1Subnet": {
       "defaultValue": "10.0.0.0/16",
@@ -346,7 +346,7 @@
       "type": "string"
     },
        "uriformastersctipt": {
-      "defaultValue": "https://qppstorage2.blob.core.windows.net/scripts/mount.sh",
+      "defaultValue": "https://qppstorage2.blob.core.windows.net/scripts/checkscript.sh",
       "metadata": {
         "description": "you should put here the exisiting filestorage name on the same resource group"
       },
@@ -921,8 +921,6 @@
                         "settings": {
                           "fileUris": [
                             "[concat(parameters('uriforsctipt'))]"
-
-
                           ]
                         },
                         "protectedSettings": {
@@ -1175,6 +1173,36 @@
           "commandToExecute": "[variables('masterCustomScript')]",
           "fileUris": []
         },
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.4"
+      },
+      "type": "Microsoft.Compute/virtualMachines/extensions"
+    },
+        {
+      "apiVersion": "[variables('apiVersionDefault')]",
+      "copy": {
+        "count": "[variables('masterCount')]",
+        "name": "vmLoopNode"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', concat(variables('masterVMNamePrefix'), copyIndex()))]"
+      ],
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('masterVMNamePrefix'), copyIndex(), '/configuremaster')]",
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "settings": {
+          "commandToExecute": "[variables('masterCustomScript')]",
+          "fileUris": [
+                            "[concat(parameters('uriformastersctipt'))]"
+                          ]
+        },
+	"protectedSettings": {
+                          "commandToExecute": "sh checkscript.sh",
+
+                          "storageAccountName": "[concat(parameters('scriptstorageaccount'))]",
+                          "storageAccountKey": "[concat(parameters('StorageAccountKey'))]"
+                        },
         "type": "CustomScriptForLinux",
         "typeHandlerVersion": "1.4"
       },
