@@ -315,7 +315,7 @@
         "description": "SSH public key used for auth to all Linux machines.  Not Required.  If not set, you must provide a password key."
       },
       "type": "string",
-      "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCz7gkqOUUUlCObjgevthzsfFEUGPxm/8+tQYqDXQ/Z0aCOB25cvSHepTWPb0fFJ8fCqp/+9mxJg8tR6XY7nliZ8ioH3j3yBphgzPAkPmoX1fEe05TPm3RQQiQiljZPiKhnxnDI9kCyPI/Fp7cmhklEDFN9aMy/0/3Jx87pIktS0KPC9U/WMrtmNr/0LeKva/0+NgvJkm3mcqAFBH3pBVsnVQrGObp7cHXVXZAas6mjhqsTLjs52T1OQkRtilZsjV9kjvD5qU9tfKRVFBLZGIsVZsCGN4+i3R0UfrCRG6EYqezLZMMf5B5jCugD68kEVPSbsccMVijPDbLWmqIlLX45"
+      "defaultValue": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDpUjqHzShny6q2S6ELRggB6cTPa9/FXSTqBzaenvalU6lIXwGwbBoKrJyJeOHtYf5N5eFU0fhGSXApb6PIYQ+l2S4xXS9hdlqgau/RY4f4Zn/MMT0KOGrMy+83r1Q0lEgrJRZ8izrcIrdNe8PwsXKAL8ZaYa2dcKrbVu1su/sZnb/vQ2zYhS74PAoy9mt1DqpOTX/UvJah92Ljo/BJtjTZ0NJ2xN9RcFigNzs43UCJ/5XbXxnuf9C5NsMCV9E9wCr4fEmkmlwRZtBPSLQuxsrkRE+ljjV9GWmyce+ZRI0+SVzzrOPNL43fTyKrn5xYjvuPa/CREyuFmCTqCeFantUD imported-openssh-key"
     },
     "scriptedfilename": {
       "type": "string",
@@ -346,7 +346,7 @@
       "type": "string"
     },
        "uriformastersctipt": {
-      "defaultValue": "https://qppstorage2.blob.core.windows.net/scripts/mountmaster.sh",
+      "defaultValue": "https://qppstorage2.blob.core.windows.net/scripts/mount.sh",
       "metadata": {
         "description": "you should put here the exisiting filestorage name on the same resource group"
       },
@@ -1151,7 +1151,8 @@
               "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('masterStorageAccountName')), variables('apiVersionStorage')).primaryEndpoints.blob, 'vhds/', variables('masterVMNamePrefix'), copyIndex(), '-osdisk.vhd')]"
             }
           }
-        },
+        }
+      },
 	"extensionProfile": {
                 "extensions": [
                     {
@@ -1177,8 +1178,7 @@
                       }
                     }
                 ]
-            }
-      },
+            },
       "tags": {
         "creationSource": "[concat('acsengine-', variables('masterVMNamePrefix'), copyIndex())]"
       },
