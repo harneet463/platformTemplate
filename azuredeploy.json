@@ -346,7 +346,7 @@
       "type": "string"
     },
        "uriformastersctipt": {
-      "defaultValue": "https://qppstorage2.blob.core.windows.net/scripts/mount.sh",
+      "defaultValue": "https://qppstorage2.blob.core.windows.net/scripts/mountmaster.sh",
       "metadata": {
         "description": "you should put here the exisiting filestorage name on the same resource group"
       },
