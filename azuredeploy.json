@@ -1153,32 +1153,6 @@
           }
         }
       },
-	"extensionProfile": {
-                "extensions": [
-                    {
-                        "name": "mountfolder",
-                      "properties": {
-                        "publisher": "Microsoft.OSTCExtensions",
-                        "type": "CustomScriptForLinux",
-                        "typeHandlerVersion": "1.4",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                          "fileUris": [
-                            "[concat(parameters('uriformastersctipt'))]"
-
-
-                          ]
-                        },
-                        "protectedSettings": {
-                          "commandToExecute": "sh mountmaster.sh",
-
-                          "storageAccountName": "[concat(parameters('scriptstorageaccount'))]",
-                          "storageAccountKey": "[concat(parameters('StorageAccountKey'))]"
-                        }
-                      }
-                    }
-                ]
-            },
       "tags": {
         "creationSource": "[concat('acsengine-', variables('masterVMNamePrefix'), copyIndex())]"
       },
