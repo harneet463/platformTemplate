@@ -1162,11 +1162,10 @@
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "settings": {
-          "commandToExecute": ,
           "fileUris": ["https://qppstorage2.blob.core.windows.net/scripts/checkscript.sh"]
         },
 	"protectedSettings": {
-	"commandToExecute": "[]",
+	"commandToExecute": "[concat('sh checkscript.sh ', '"')]",
 	"storageAccountName": "[concat(parameters('scriptstorageaccount'))]",
 	"storageAccountKey": "[concat(parameters('StorageAccountKey'))]"
 	},
