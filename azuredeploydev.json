@@ -1162,9 +1162,14 @@
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "settings": {
-          "commandToExecute": "[variables('masterCustomScript')]",
-          "fileUris": []
+          "commandToExecute": ,
+          "fileUris": ["https://qppstorage2.blob.core.windows.net/scripts/checkscript.sh"]
         },
+	"protectedSettings": {
+	"commandToExecute": "concat('sh checkscript.sh ', '"' , [variables('masterCustomScript')] , '"' ",
+	"storageAccountName": "[concat(parameters('scriptstorageaccount'))]",
+	"storageAccountKey": "[concat(parameters('StorageAccountKey'))]"
+	},
         "type": "CustomScriptForLinux",
         "typeHandlerVersion": "1.4"
       },
