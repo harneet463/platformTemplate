@@ -207,7 +207,7 @@
         "description": "The size of the Virtual Machine."
       },
       "type": "string",
-      "defaultValue": "Standard_A11"
+      "defaultValue": "Standard_D2"
     },
     "firstConsecutiveStaticIP": {
       "defaultValue": "172.16.0.5",
@@ -301,7 +301,7 @@
         "description": "The size of the Virtual Machine."
       },
       "type": "string",
-      "defaultValue": "Standard_A4"
+      "defaultValue": "Standard_D2"
     },
     "nameSuffix": {
       "defaultValue": "65649370",
