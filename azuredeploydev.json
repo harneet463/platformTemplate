@@ -209,13 +209,6 @@
       "type": "string",
       "defaultValue": "Standard_D2"
     },
-    "firstConsecutiveStaticIP": {
-      "defaultValue": "172.16.0.5",
-      "metadata": {
-        "description": "Sets the static IP of the first master"
-      },
-      "type": "string"
-    },
     "linuxAdminUsername": {
       "metadata": {
         "description": "User name for the Linux Virtual Machines (SSH or Password)."
@@ -228,14 +221,7 @@
         "description": "Sets the Domain name label for the master IP Address.  The concatenation of the domain name label and the regional DNS zone make up the fully qualified domain name associated with the public IP address."
       },
       "type": "string",
-      "defaultValue": "qpp"
-    },
-    "masterSubnet": {
-      "defaultValue": "172.16.0.0/24",
-      "metadata": {
-        "description": "Sets the subnet of the master node(s)."
-      },
-      "type": "string"
+      "defaultValue": "qpp1"
     },
     "masterVMSize": {
       "allowedValues": [
@@ -377,7 +363,7 @@
     "masterCustomScript": "[concat('/bin/bash -c \"/bin/bash /opt/azure/containers/configure-swarm-cluster.sh ',variables('clusterInstallParameters'),' >> /var/log/azure/cluster-bootstrap.log 2>&1\"')]",
     "masterEndpointDNSNamePrefix": "[tolower(parameters('masterEndpointDNSNamePrefix'))]",
     "masterFirstAddrOctet4": "[variables('masterFirstAddrOctets')[3]]",
-    "masterFirstAddrOctets": "[split(parameters('firstConsecutiveStaticIP'),'.')]",
+    "masterFirstAddrOctets": "[split(parameters('172.16.0.5'),'.')]",
     "masterFirstAddrPrefix": "[concat(variables('masterFirstAddrOctets')[0],'.',variables('masterFirstAddrOctets')[1],'.',variables('masterFirstAddrOctets')[2],'.')]",
     "masterLbBackendPoolName": "[concat(variables('orchestratorName'), '-master-pool-', variables('nameSuffix'))]",
     "masterLbID": "[resourceId('Microsoft.Network/loadBalancers',variables('masterLbName'))]",
@@ -956,7 +942,7 @@
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
-            "[variables('masterSubnet')]",
+            "'172.16.0.0/24'",
             "[variables('agentpool1Subnet')]"
           ]
         },
@@ -964,7 +950,7 @@
           {
             "name": "[variables('masterSubnetName')]",
             "properties": {
-              "addressPrefix": "[variables('masterSubnet')]"
+              "addressPrefix": "'172.16.0.0/24'"
             }
           },
           {
