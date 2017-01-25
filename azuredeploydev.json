@@ -118,13 +118,6 @@
       "type": "string",
       "defaultValue": "quarkplatform1"
     },
-    "agentpool1Subnet": {
-      "defaultValue": "10.0.0.0/16",
-      "metadata": {
-        "description": "Sets the subnet of agent pool 'agentpool1'."
-      },
-      "type": "string"
-    },
     "agentpool1VMSize": {
       "allowedValues": [
         "Basic_A2",
@@ -349,7 +342,6 @@
     "agentpool1LbName": "[concat(variables('orchestratorName'), '-agentpool1-', variables('nameSuffix'))]",
     "agentpool1StorageAccountOffset": "[mul(variables('maxStorageAccountsPerAgent'),0)]",
     "agentpool1StorageAccountsCount": "[variables('maxStorageAccountsPerAgent')]",
-    "agentpool1Subnet": "[parameters('agentpool1Subnet')]",
     "agentpool1SubnetName": "[concat(variables('orchestratorName'), '-agentpool1subnet')]",
     "agentpool1VMNamePrefix": "[concat(variables('orchestratorName'), '-agentpool1-', variables('nameSuffix'))]",
     "agentpool1VMSize": "[parameters('agentpool1VMSize')]",
@@ -372,7 +364,6 @@
     "masterLbName": "[concat(variables('orchestratorName'), '-master-lb-', variables('nameSuffix'))]",
     "masterPublicIPAddressName": "[concat(variables('orchestratorName'), '-master-ip-', variables('masterEndpointDNSNamePrefix'), '-', variables('nameSuffix'))]",
     "masterStorageAccountName": "[concat(variables('storageAccountBaseName'), '0')]",
-    "masterSubnet": "[parameters('masterSubnet')]",
     "masterSubnetName": "[concat(variables('orchestratorName'), '-masterSubnet')]",
     "masterVMNamePrefix": "[concat(variables('orchestratorName'), '-master-', variables('nameSuffix'), '-')]",
     "masterVMSize": "[parameters('masterVMSize')]",
@@ -943,7 +934,7 @@
         "addressSpace": {
           "addressPrefixes": [
             "'172.16.0.0/24'",
-            "[variables('agentpool1Subnet')]"
+            "['10.0.0.0/16']"
           ]
         },
         "subnets": [
@@ -956,7 +947,7 @@
           {
             "name": "[variables('agentpool1SubnetName')]",
             "properties": {
-              "addressPrefix": "[variables('agentpool1Subnet')]"
+              "addressPrefix": "['10.0.0.0/16']"
             }
           }
         ]
