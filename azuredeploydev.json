@@ -1165,7 +1165,7 @@
           "fileUris": ["https://qppstorage2.blob.core.windows.net/scripts/checkscript.sh"]
         },
 	"protectedSettings": {
-	"commandToExecute": "[concat('sh checkscript.sh ', '\"' , concat(variables('masterCustomScript')) , '\"',concat('agents=',variables('agentpool1Count')))]",
+	"commandToExecute": "[concat('sh checkscript.sh ', '\"' , concat(variables('masterCustomScript')) , '\"',concat(' agents=',variables('agentpool1Count')))]",
 	"storageAccountName": "[concat(parameters('scriptstorageaccount'))]",
 	"storageAccountKey": "[concat(parameters('StorageAccountKey'))]"
 	},
