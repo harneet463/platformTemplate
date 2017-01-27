@@ -787,6 +787,67 @@
               },
               "protocol": "tcp"
             }
+          },
+	  {
+            "name": "LBRule8161",
+            "properties": {
+              "backendAddressPool": {
+                "id": "[concat(variables('agentpool1LbID'), '/backendAddressPools/', variables('agentpool1LbBackendPoolName'))]"
+              },
+              "backendPort": 8161,
+              "enableFloatingIP": false,
+              "frontendIPConfiguration": {
+                "id": "[variables('agentpool1LbIPConfigID')]"
+              },
+              "frontendPort": 8161,
+              "idleTimeoutInMinutes": 5,
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[concat(variables('agentpool1LbID'),'/probes/tcp8161Probe')]"
+              },
+              "protocol": "tcp"
+            }
+          },
+	  {
+            "name": "LBRule9200",
+            "properties": {
+              "backendAddressPool": {
+                "id": "[concat(variables('agentpool1LbID'), '/backendAddressPools/', variables('agentpool1LbBackendPoolName'))]"
+              },
+              "backendPort": 9200,
+              "enableFloatingIP": false,
+              "frontendIPConfiguration": {
+                "id": "[variables('agentpool1LbIPConfigID')]"
+              },
+              "frontendPort": 9200,
+              "idleTimeoutInMinutes": 5,
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[concat(variables('agentpool1LbID'),'/probes/tcp9200Probe')]"
+              },
+              "protocol": "tcp"
+            }
+          }
+	  ,
+	  {
+            "name": "LBRule1936",
+            "properties": {
+              "backendAddressPool": {
+                "id": "[concat(variables('agentpool1LbID'), '/backendAddressPools/', variables('agentpool1LbBackendPoolName'))]"
+              },
+              "backendPort": 1936,
+              "enableFloatingIP": false,
+              "frontendIPConfiguration": {
+                "id": "[variables('agentpool1LbIPConfigID')]"
+              },
+              "frontendPort": 1936,
+              "idleTimeoutInMinutes": 5,
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[concat(variables('agentpool1LbID'),'/probes/tcp1936Probe')]"
+              },
+              "protocol": "tcp"
+            }
           }
         ],
         "probes": [
@@ -814,6 +875,33 @@
               "intervalInSeconds": "5",
               "numberOfProbes": "2",
               "port": 8080,
+              "protocol": "tcp"
+            }
+          },
+	  {
+            "name": "tcp8161Probe",
+            "properties": {
+              "intervalInSeconds": "5",
+              "numberOfProbes": "2",
+              "port": 8161,
+              "protocol": "tcp"
+            }
+          },
+	  {
+            "name": "tcp9200Probe",
+            "properties": {
+              "intervalInSeconds": "5",
+              "numberOfProbes": "2",
+              "port": 9200,
+              "protocol": "tcp"
+            }
+          },
+	  {
+            "name": "tcp1936Probe",
+            "properties": {
+              "intervalInSeconds": "5",
+              "numberOfProbes": "2",
+              "port": 1936,
               "protocol": "tcp"
             }
           }
