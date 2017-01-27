@@ -352,7 +352,7 @@
     "agentMaxVMs": 100,
     "agentRunCmd": "[concat('runcmd:\n -  [ /bin/bash, /opt/azure/containers/install-cluster.sh ]\n\n')]",
     "agentRunCmdFile": "[concat(' -  content: |\n        #!/bin/bash\n        ',variables('agentCustomScript'),'\n    path: /opt/azure/containers/install-cluster.sh\n    permissions: \"0744\"\n')]",
-    "agentpool1AccountName": "[concat(variables('storageAccountBaseName'), 'agnt0')]",
+    "agentpool1AccountName": "[concat(variables('storageAccountBaseName'), variables('agentpool1EndpointDNSNamePrefix'))]",
     "agentpool1Count": "[parameters('agentpool1Count')]",
     "agentpool1EndpointDNSNamePrefix": "[tolower(parameters('agentpool1EndpointDNSNamePrefix'))]",
     "agentpool1IPAddressName": "[concat(variables('orchestratorName'), '-agent-ip-', variables('agentpool1EndpointDNSNamePrefix'), '-', variables('nameSuffix'))]",
