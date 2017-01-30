@@ -827,8 +827,7 @@
               },
               "protocol": "tcp"
             }
-          }
-	  ,
+          },
 	  {
             "name": "LBRule1936",
             "properties": {
@@ -845,6 +844,26 @@
               "loadDistribution": "Default",
               "probe": {
                 "id": "[concat(variables('agentpool1LbID'),'/probes/tcp1936Probe')]"
+              },
+              "protocol": "tcp"
+            }
+          },
+	  {
+            "name": "LBRule9000",
+            "properties": {
+              "backendAddressPool": {
+                "id": "[concat(variables('agentpool1LbID'), '/backendAddressPools/', variables('agentpool1LbBackendPoolName'))]"
+              },
+              "backendPort": 9000,
+              "enableFloatingIP": false,
+              "frontendIPConfiguration": {
+                "id": "[variables('agentpool1LbIPConfigID')]"
+              },
+              "frontendPort": 9000,
+              "idleTimeoutInMinutes": 5,
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[concat(variables('agentpool1LbID'),'/probes/tcp9000Probe')]"
               },
               "protocol": "tcp"
             }
@@ -902,6 +921,15 @@
               "intervalInSeconds": "5",
               "numberOfProbes": "2",
               "port": 1936,
+              "protocol": "tcp"
+            }
+          },
+	  {
+            "name": "tcp9000Probe",
+            "properties": {
+              "intervalInSeconds": "5",
+              "numberOfProbes": "2",
+              "port": 9000,
               "protocol": "tcp"
             }
           }
