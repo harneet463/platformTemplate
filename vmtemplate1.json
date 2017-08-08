@@ -1,0 +1,353 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "QppVirtualMachineName": {
+              "defaultValue": "qppvm",
+               "type": "string"
+        },
+        "QppVirtualMachineSize": {
+	    "defaultValue": "Standard_DS2_v2",
+            "type": "string",
+	    "metadata": {
+	       "description": "For detailed list of VM sizes visit page https://docs.microsoft.com/en-gb/azure/virtual-machines/windows/sizes"
+	    }
+	    },
+         "QppWindowsOSVersion": {
+            "type": "string",
+            "defaultValue": "2016-Datacenter",
+            "allowedValues": [
+                "2012-Datacenter",
+                "2012-R2-Datacenter",
+                "2016-Nano-Server",
+                "2016-Datacenter-with-Containers",
+                "2016-Datacenter"
+            ],
+            "metadata": {
+                "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
+            }
+        },
+	
+	"numberOfQppVMs": {
+	    "defaultValue": 1,
+            "type": "int",
+	    "metadata": {
+             "description": "Number of VM instances to be created."
+           }
+	    },
+        "adminUsername": {
+            "type": "string",
+	    "defaultValue": "neergupta"
+        },
+        "adminPassword": {
+            "type": "securestring",
+    	    "defaultValue": "Qpppwd123456"
+        },
+        
+        "diagnosticsStorageAccountType": {
+	    "defaultValue": "Standard_LRS",
+	    "type": "string",
+	    "metadata": {
+	      "description": "Possible values: Standard_LRS, Standard_GRS, Standard_RAGRS, Standard_ZRS, Premium_LRS"
+	    }	    
+        },
+            
+        "publicIpAddressType": {
+	    "defaultValue": "Dynamic",
+	    "type": "string",
+	    "metadata": {
+	       "description": "Defines whether the IP address is stable or dynamic. Options are Static or Dynamic"
+	    }
+        },
+
+	"scriptFileUri": {
+	    "defaultValue": "https://quarkstorage.blob.core.windows.net/script/Setup.bat",
+	    "type": "string",
+	    "metadata": {
+	       "description": "URI of the custom script file which is used to copy/install Platform."
+	    }
+        },
+	"storagekey": {
+	    "defaultValue": "\"cvWLZFpUpK4OKqlFEty5Q83ywMcr3qNRAgD9Qj8pZf4Es+vcBhU0hc83SE90q7yLMbKXbHih7cS1YmJWVTTaRg==\"",
+	    "type": "string",
+	    "metadata": {
+	       "description": "Valcode provided by Quark."
+	    }
+        },
+	 "storageEncryptionEnabled": {
+            "type": "bool",
+            "defaultValue": false
+        },
+	"storageHttpsTrafficOnlyEnabled": {
+            "type": "bool",
+            "defaultValue": false
+        },
+	"storageAccountType": {
+            "type": "string",
+	    "defaultValue": "Standard_RAGRS"
+        }
+	
+    },
+    "variables": {
+	"namingSuffix": "[toLower(substring(uniqueString(resourceGroup().id), 0, 9))]",
+	"dbserverName": "[concat('qppdb-', variables('namingSuffix'))]",
+	"applicationGatewayName": "[concat('qppappgateway_', variables('namingSuffix'))]",
+	"nicName": "[concat('qppvmnic_', variables('namingSuffix'))]",
+	"networkSecurityGroupName":  "[concat('qppnsg_', variables('namingSuffix'))]",
+	"vnetName": "[toLower(concat('qppvnet_', substring(uniqueString(resourceGroup().id), 0, 6) ))]",
+        "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+
+	"diagnosticsStorageAccountName": "[concat('qppdiagsa', variables('namingSuffix'))]", 
+        "subnetNameGateway": "qppgatewaysubnet",
+        "subnetNameVMs": "qppvmsubnet",
+        "subnetRefVms": "[concat(variables('vnetId'), '/subnets/', variables('subnetNameVMs'))]",
+        "subnetRefGateway": "[concat(variables('vnetId'), '/subnets/', variables('subnetNameGateway'))]",
+
+	"vmPublicIpAddressName": "[toLower(concat('qppvmip_', variables('namingSuffix')))]",
+	
+        "gwPublicIpAddressName": "[toLower(concat('qppgatewayip_', variables('namingSuffix') ) )]",
+        "publicIPRef": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('gwPublicIpAddressName'))]",
+
+        "applicationGatewayID": "[resourceId('Microsoft.Network/applicationGateways', variables('applicationGatewayName'))]",
+	"vmCustomExtension":	"[toLower(concat('VmCustomExtension-', variables('namingSuffix')))]",
+
+	"UriFileNamePieces": "[split(parameters('scriptFileUri'), '/')]",
+	"firstFileNameString": "[variables('UriFileNamePieces')[sub(length(variables('UriFileNamePieces')), 1)]]",
+	"firstFileNameBreakString": "[split(variables('firstFileNameString'), '?')]",
+	"firstFileName": "[variables('firstFileNameBreakString')[0]]",
+	"assetsStorageName": "[concat('qppassets', variables('namingSuffix'))]",
+	"assetsStorageAccessKey": "some dummy",
+	"scriptArguments":  "[concat(parameters('storagekey') , ' ', variables('assetsStorageName'), ' ', variables('assetsStorageAccessKey'))]" 
+
+    },
+    "resources": [
+        {
+            "apiVersion": "2016-12-01",
+            "name": "[variables('assetsStorageName')]",
+            "location": "[resourceGroup().location]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "[parameters('storageAccountType')]"
+            },
+            "kind": "Storage",
+            "properties": {
+                "encryption": {
+                    "services": {
+                        "blob": {
+                            "enabled": "[parameters('storageEncryptionEnabled')]"
+                        },
+                        "file": {
+                            "enabled": "[parameters('storageEncryptionEnabled')]"
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "supportsHttpsTrafficOnly": "[parameters('storageHttpsTrafficOnlyEnabled')]"
+            }
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/c443b837-c226-4840-85cc-c7b5fc0be02a/resourceGroups/qppRG1/providers/Microsoft.Network/publicIPAddresses/qpppubip'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('gwPublicIpAddressName')]",
+            "apiVersion": "2017-03-01",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/c443b837-c226-4840-85cc-c7b5fc0be02a/resourceGroups/qppRG1/providers/Microsoft.Network/virtualNetworks/qppvnet1'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('vnetName')]",
+            "apiVersion": "2017-03-01",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetNameGateway')]",
+                        "properties": {
+                            "addressPrefix": "10.0.2.0/24"
+                        }
+                    },
+                    {
+                        "name": "[variables('subnetNameVMs')]",
+                        "properties": {
+                            "addressPrefix": "10.0.1.0/24"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": []
+            },
+            "dependsOn": []
+        },
+      
+        {
+            "name": "[concat(parameters('QppVirtualMachineName'), copyIndex())]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2016-04-30-preview",
+	    "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "qppnicloop",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('diagnosticsStorageAccountName'))]",
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+            ],
+            "properties": {
+                "osProfile": {
+                    "computerName": "[parameters('QppVirtualMachineName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "windowsConfiguration": {
+                        "provisionVmAgent": "true"
+                    }
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('QppVirtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                         "sku": "[parameters('QppWindowsOSVersion')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('nicName'), copyIndex()))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[reference(resourceId(resourceGroup().name, 'Microsoft.Storage/storageAccounts', variables('diagnosticsStorageAccountName')), '2015-06-15').primaryEndpoints['blob']]"
+                    }
+                }
+            },
+            "copy": {
+                "name": "qppvmloop",
+                "count": "[parameters('numberOfQppVMs')]" 
+            }
+        },
+
+	{
+		"name": "[concat(parameters('QppVirtualMachineName'), copyIndex(),'/CustomScriptExtension')]",
+		"type": "Microsoft.Compute/virtualMachines/extensions",
+		"location": "[resourceGroup().location]",
+		"apiVersion": "2015-06-15",
+		"dependsOn": ["qppvmloop"],
+		"properties": {
+			"publisher": "Microsoft.Compute",
+		        "type": "CustomScriptExtension",
+		        "typeHandlerVersion": "1.7",
+		        "autoUpgradeMinorVersion": true,
+			 "settings": {
+				"fileUris": "[split(parameters('scriptFileUri'), ' ')]"
+			},
+			"protectedSettings": {
+			         "commandToExecute": "[concat (variables('firstFileName'), ' ', variables('scriptArguments'), ' ', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('assetsStorageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+			}			
+		},
+		"copy": {
+			"name": "qppextensionloop",
+	                "count": "[parameters('numberOfQppVMs')]" 
+		}
+	},
+	
+        {
+            "name": "[variables('diagnosticsStorageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2015-06-15",
+    	    "location": "[resourceGroup().location]",
+            "properties": {
+                "accountType": "[parameters('diagnosticsStorageAccountType')]"
+            }
+        },
+        {
+            "name": "[concat(variables('nicName'), copyIndex())]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2016-09-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "qppvmiploop",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRefVms')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIpAddress": {
+                                "id": "[resourceId(resourceGroup().name,'Microsoft.Network/publicIpAddresses', concat(variables('vmPublicIpAddressName'), copyIndex()))]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                }
+            },
+	    "copy": {
+                "name": "qppnicloop",
+                "count": "[parameters('numberOfQppVMs')]"
+            }
+        },
+        {
+            "name": "[concat(variables('vmPublicIpAddressName'), copyIndex())]",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "apiVersion": "2016-09-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
+            },
+	    "copy": {
+                "name": "qppvmiploop",
+                "count": "[parameters('numberOfQppVMs')]"
+            }
+        },
+        {
+            "name": "[variables('networkSecurityGroupName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2016-09-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "TCP",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
