@@ -345,6 +345,19 @@
                             "sourcePortRange": "*",
                             "destinationAddressPrefix": "*"
                         }
+                    },
+			{
+                        "name": "Qpp-Server",
+                        "properties": {
+                            "priority": 500,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "TCP",
+                            "destinationPortRange": "61400-61407",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
                     }
                 ]
             }
