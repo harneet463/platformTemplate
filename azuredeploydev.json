@@ -326,7 +326,7 @@
     },
     "scriptstorageaccount": {
       "type": "string",
-      "defaultValue": "quarkstorage1",
+      "defaultValue": "qppacs",
       "metadata": {
         "description": "your share name "
       }
@@ -339,7 +339,7 @@
       }
     },
     "uriforsctipt": {
-      "defaultValue": "https://quarkstorage1.blob.core.windows.net/scripts/mount.sh",
+      "defaultValue": "https://qppacs.blob.core.windows.net/scripts/mount.sh",
       "metadata": {
         "description": "you should put here the exisiting filestorage name on the same resource group"
       },
@@ -1278,7 +1278,7 @@
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",
         "settings": {
-          "fileUris": ["https://quarkstorage1.blob.core.windows.net/scripts/checkscript.sh"]
+          "fileUris": ["https://qppacs.blob.core.windows.net/scripts/checkscript.sh"]
         },
 	"protectedSettings": {
 	"commandToExecute": "[concat('sh checkscript.sh ', '\"' , concat(variables('masterCustomScript')) , '\"',concat(' agents=',variables('agentpool1Count')))]",
